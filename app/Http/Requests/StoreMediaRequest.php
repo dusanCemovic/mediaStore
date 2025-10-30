@@ -11,7 +11,8 @@ class StoreMediaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        // Authorization is handled by middleware; allow validation.
+        return true;
     }
 
     /**
@@ -21,8 +22,11 @@ class StoreMediaRequest extends FormRequest
      */
     public function rules(): array
     {
+        // setup rules for input files
         return [
-            //
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:511',
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,svg,mp4,mov,avi,mkv,webm|max:78848', // max 77MB L.D. :)
         ];
     }
 }
