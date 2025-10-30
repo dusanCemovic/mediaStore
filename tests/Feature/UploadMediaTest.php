@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Media;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -13,25 +12,22 @@ class UploadMediaTest extends TestCase
 {
     // empty database after start of each test. Then migrates start and so on
     use RefreshDatabase;
+
+    public string $token = 'test';
+    public string $wrongToken = 'test-wrong-token';
+
     /**
-     * A basic feature test example.
+     * Test where everything should go smoothly.
+     * Upload, file storage, database, response, size same
+     * @return void
      */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-
     public function test_media_upload_saves_file_and_db_record()
     {
         // fake storage so no files are crated
         Storage::fake('public');
 
-        $token = 'test';
-
         // Put a token in the environment for the middleware to check
-        putenv('API_TOKEN=' . $token);
+        putenv('API_TOKEN=' . $this->token);
 
         // fake file
         $file = UploadedFile::fake()->image('photo.jpg')->size(1024); // 1MB
@@ -42,7 +38,7 @@ class UploadMediaTest extends TestCase
             'description' => 'Test upload',
             'file' => $file,
         ], [
-            'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer ' . $this->token,
         ]);
 
         // check if we get 201

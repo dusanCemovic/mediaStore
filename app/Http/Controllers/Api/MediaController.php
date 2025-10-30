@@ -4,35 +4,26 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMediaRequest;
-use App\Models\Media;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
-    public function store(StoreMediaRequest $request): JsonResponse
+    public function store(StoreMediaRequest $request, MediaService $service): JsonResponse
     {
         // get file
         $file = $request->file('file');
 
-        // Unique filename
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        // this is service for saving in folder and storing file in db
+        $media = $service->store(
+            $file,
+            $request->input('title'),
+            $request->input('description')
+        );
 
-        // Store in public
-        $path = $file->storeAs('media', $filename, 'public');
-
-        // Save in database
-        $media = Media::create([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'filename' => $filename,
-            'mime' => $file->getClientMimeType(),
-            'size' => $file->getSize(),
-            'path' => $path,
-        ]);
-
-        // Public URL (assumes `php artisan storage:link` created)
-        $publicUrl = url(Storage::url($path));
+        // Public URL
+        $publicUrl = url(Storage::url($media->path));
 
         // give response to client
         return response()->json([
