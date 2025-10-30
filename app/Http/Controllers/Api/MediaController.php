@@ -44,4 +44,12 @@ class MediaController extends Controller
             'url' => $publicUrl,
         ], 201);
     }
+
+    public function list(): JsonResponse
+    {
+        return response()->json([
+            'response'  => 'Success with ping',
+        ], 201);
+        //return response()->json(Media::all());
+    }
 }

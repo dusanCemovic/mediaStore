@@ -31,7 +31,10 @@ class ApiTokenMiddleware
 
         // 2. Checking token with env api token.
         if (!$token || $token !== env('API_TOKEN')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(
+                [
+                    'message' => 'Unauthorized'
+                ], 401);
         }
 
         // allow to continue
