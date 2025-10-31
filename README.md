@@ -147,6 +147,7 @@ curl -X GET http://127.0.0.1:8000/api/list \
 
 - Always more tests
 - For listing, create pagination
+- Allow only to add via https and set this project on docker and allow https on local
 - For security, it can be used some library like Laravel Sanctum.
 - Media can be organized into folder or some specific structure.
 - Thumbnail can be created when listing file on front-end if we used also web routes.
