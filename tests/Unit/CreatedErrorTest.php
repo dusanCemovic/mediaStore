@@ -1,10 +1,8 @@
 <?php
 
-namespace Feature;
+namespace Tests\Unit;
 
-use App\Models\Media;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -73,7 +71,7 @@ class CreatedErrorTest extends TestCase
         Storage::fake('public');
         putenv('API_TOKEN=' . $this->token);
 
-        $file = UploadedFile::fake()->create('large.mp4', 100 * 1024); // 50 MB
+        $file = UploadedFile::fake()->create('large.mp4', 100 * 1024); // 100 MB
 
         $response = $this->postJson('/api/upload-media', [
             'title' => 'Big File',
