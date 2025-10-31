@@ -13,9 +13,6 @@ class UploadMediaTest extends TestCase
     // empty database after start of each test. Then migrates start and so on
     use RefreshDatabase;
 
-    public string $token = 'test';
-    public string $wrongToken = 'test-wrong-token';
-
     /**
      * Test where everything should go smoothly.
      * Upload, file storage, database, response, size same
@@ -27,7 +24,7 @@ class UploadMediaTest extends TestCase
         Storage::fake('public');
 
         // Put a token in the environment for the middleware to check
-        putenv('API_TOKEN=' . $this->token);
+        putenv('API_TOKEN=' . env('API_TOKEN'));
 
         // fake file
         $file = UploadedFile::fake()->image('photo.jpg')->size(1024); // 1MB
@@ -38,7 +35,7 @@ class UploadMediaTest extends TestCase
             'description' => 'Test upload',
             'file' => $file,
         ], [
-            'Authorization' => 'Bearer ' . $this->token,
+            'Authorization' => 'Bearer ' . env('API_TOKEN'),
         ]);
 
         // check if we get 201

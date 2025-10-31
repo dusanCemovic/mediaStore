@@ -12,14 +12,32 @@ class AuthTest extends TestCase
     // empty database after start of each test. Then migrates start and so on
     use RefreshDatabase;
 
-    public string $token = 'test';
     public string $wrongToken = 'test-wrong-token';
 
     /**
-     * This test is used when token is invalid
+     * This test is used when token should be valid in env file
      * @return void
      */
-    public function test_upload_fails_with_invalid_token()
+    public function test_request_with_your_token()
+    {
+        Storage::fake('public');
+        // Put a token in the environment for the middleware to check
+        putenv('API_TOKEN=' . env('API_TOKEN'));
+
+        $file = UploadedFile::fake()->image('photo.jpg');
+
+        $response = $this->postJson('/api/upload-media', [
+            'title' => 'Proper Token',
+            'description' => 'Authorized attempt',
+            'file' => $file,
+        ], [
+            'Authorization' => 'Bearer ' . env('API_TOKEN'),
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function test_request_with_invalid_token()
     {
         Storage::fake('public');
         // Put a token in the environment for the middleware to check

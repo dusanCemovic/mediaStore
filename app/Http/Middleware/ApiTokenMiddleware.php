@@ -30,7 +30,7 @@ class ApiTokenMiddleware
         }
 
         // 2. Checking token with env api token.
-        if (!$token || $token !== env('API_TOKEN')) {
+        if (!$token || $token !== config('auth.custom-api-key')) {
             return response()->json(
                 [
                     'message' => 'Unauthorized'

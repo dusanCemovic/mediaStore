@@ -27,7 +27,8 @@ creates a DB record, and returns metadata including file type, size, and a publi
    ```
 5. You may:
     1. Just change database credentials for your mysql and run migration which will automatically create db
-    2. Or do by yourself in console `mysql -u user -p` and `create database media_store` then change credentials in env
+    2. Or do by yourself in console `mysql -u user -p` login with your password and `create database media_store` then
+       change credentials in env
        file
 6. Run:
    ```
@@ -46,7 +47,8 @@ creates a DB record, and returns metadata including file type, size, and a publi
     ```
     php artisan serve
     ```
-11. Open `http://127.0.0.1:8000/api/ping` which will show that connection to api is enabled
+11. Open `http://127.0.0.1:8000/api/ping` which will show that connection to api is enabled (this api is excluded from
+    auth)
 
 ## Notes
 
@@ -67,36 +69,73 @@ creates a DB record, and returns metadata including file type, size, and a publi
 ## Descriptions
 
 - MODEL:
-    - `app/Models/Media` model which is just simple model with fillable attributes, without factory or seeder
+    - `app/Models/Media` model which is just simple model with fillable attributes, without factory or seeder.
 - DB:
-    - beside default migration for cache and jobs, we created media table `2025_10_30_162957_create_media_table` with
-      information for storing image/video
+    - beside default migration for cache and jobs, media table `2025_10_30_162957_create_media_table` is created with
+      information for storing image/video.
 - Middleware
-    - `app/Http/Middleware/ApiTokenMiddleware` handle authorizations via Authorization or X-API-TOKEN
-    - if everything is ok, it allows to go to request and controller
+    - `app/Http/Middleware/ApiTokenMiddleware` handle authorizations via Authorization or X-API-TOKEN.
+    - if everything is ok, it allows to go to request and controller.
     - api route and this middleware is added by default for all api group in file bootstrap/api.php
       ```
       $middleware->api(append: [ApiTokenMiddleware::class]);
       ```
 - Requests
     - `app/Http/Requests/StoreMediaRequest` extends default `Request` which gets all arguments for storing assets.
-    - By default, it has `authorize` method, and it is set true, because real authorization goes via middleware
-    - That class setup `rules` which needs to be fulfilled for arguments like title, description and file
+    - By default, it has `authorize` method, and it is set true, because real authorization goes via middleware.
+    - That class setup `rules` which needs to be fulfilled for arguments like title, description and file.
 - Controller:
-    - `app/Http/Controller/MediaController` get request and handle it and return response
-    - Controller just get file and send it to MediaService for handling saving.
+    - `app/Http/Controller/MediaController` get request and handle it and return response.
+    - Controller just get file from request and send it to MediaService for handling saving.
     - At the end it returns json response based on result that MediaService done.
 - Service:
-    - `app/Http/Controller/MediaService` handle saving via method store
+    - `app/Http/Controller/MediaService` handle saving via method store.
     - It is done like this to separate logic from controller and to be able to test easier. It is good concept to break
       this is smaller classes.
-    - It returns Media object to controller
+    - It returns Media object to controller.
 - Router
     - `routes/api.php` is used. Middleware is added by default for this group.
     - one route `ping` is created just for showcase and is it used without this middleware. This is done just for
       showcase.
     - This can be done differently by not adding middleware by default, but with new group.
 - Test
+    - For testing we have 8 tests in total. One class for Feature and three classes for Test units
+    - `Feature/UploadMediaTest` - which simulate behavior from start to end which multi asserts (1)
+    - `Unit/AuthTest` - with testing auth with token added in env file (2), invalid token (3) and without token (4)
+    - `Unit/PostRequestTest` - with testing post request with missing title (5), invalid type (6), large file (7)
+    - `Unit/MediaServiceTest` - with testing Media Service if it is handling well test file and return proper Media
+      object (8)
+- Other
+  - Accepted Token is stored in config/auth/ `custom-api-key` 
 
-## Posible improvements
+## EXAMPLE:
 
+### POST /api/upload-media
+
+#### Headers
+
+`Authorization: Bearer {API_TOKEN}`
+
+#### Body
+
+- title: string
+- description: string
+- file: image or video
+
+#### Example
+
+curl -X POST http://127.0.0.1:8000/api/upload-media \
+-H "Authorization: Bearer {API_TOKEN}" \
+-F "title=My Photo" \
+-F "description=Uploaded via API" \
+-F "file=@/home/dusan/Documents/test.png"
+
+
+## Possible improvements
+
+- Always more tests
+- For listing, create pagination
+- For security, it can be used some library like Laravel Sanctum.
+- Media can be organized into folder or some specific structure.
+- Thumbnail can be created when listing file on front-end if we used also web routes.
+- Download endpoint can be created while listing on api call
