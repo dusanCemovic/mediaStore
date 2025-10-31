@@ -12,24 +12,23 @@ creates a DB record, and returns metadata including file type, size, and a publi
 
 ## Setup
 
-1. Clone repo https://github.com/dusanCemovic/mediaStore
+1. Clone repo https://github.com/dusanCemovic/mediaStore and go into folder `cd mediaStore`
 2. Composer:
    ```
     composer install
    ```
 3. NPM:
    ```
-    npm install & npm run build
+    npm install && npm run build
    ```
 4. COPY env example
    ```
     cp .env.example .env
    ```
-5. You may:
+5. In env file you need to:
     1. Just change database credentials for your mysql and run migration which will automatically create db
     2. Or do by yourself in console `mysql -u user -p` login with your password and `create database media_store` then
-       change credentials in env
-       file
+       change credentials in env file
 6. Run:
    ```
     php artisan key:generate
@@ -124,12 +123,16 @@ creates a DB record, and returns metadata including file type, size, and a publi
 
 #### Example
 
+```
 curl -X POST http://127.0.0.1:8000/api/upload-media \
 -H "Authorization: Bearer {API_TOKEN}" \
 -F "title=My Photo" \
 -F "description=Uploaded via API" \
 -F "file=@/home/dusan/Documents/test.png"
+```
 
+- In this example just change {API_TOKEN} with real one and be careful with route of your file.
+- This is my route to Document folder in my Ubuntu
 
 ## Possible improvements
 
