@@ -87,6 +87,7 @@ creates a DB record, and returns metadata including file type, size, and a publi
     - `app/Http/Controller/MediaController` get request and handle it and return response.
     - Controller just get file from request and send it to MediaService for handling saving.
     - At the end it returns json response based on result that MediaService done.
+    - Additionally, there is method ping (used for checking if api is live without api key) and list (listing all added media)
 - Service:
     - `app/Http/Controller/MediaService` handle saving via method store.
     - It is done like this to separate logic from controller and to be able to test easier. It is good concept to break
@@ -94,6 +95,8 @@ creates a DB record, and returns metadata including file type, size, and a publi
     - It returns Media object to controller.
 - Router
     - `routes/api.php` is used. Middleware is added by default for this group.
+    - `api/upload-media` is used for adding image, which is main part of this project
+    - `api/list` is just for showcase all added images with urls. It returns json with ids and urls
     - one route `ping` is created just for showcase and is it used without this middleware. This is done just for
       showcase.
     - This can be done differently by not adding middleware by default, but with new group.
@@ -130,9 +133,15 @@ curl -X POST http://127.0.0.1:8000/api/upload-media \
 -F "description=Uploaded via API" \
 -F "file=@/home/dusan/Documents/test.png"
 ```
-
 - In this example just change {API_TOKEN} with real one and be careful with route of your file.
 - This is my route to Document folder in my Ubuntu
+
+#### Example for listing with just urls
+
+```
+curl -X GET http://127.0.0.1:8000/api/list \
+-H "Authorization: Bearer {API_TOKEN}"
+```
 
 ## Possible improvements
 
