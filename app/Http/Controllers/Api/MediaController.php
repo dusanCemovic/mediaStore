@@ -32,7 +32,7 @@ class MediaController extends Controller
             'description' => $media->description,
             'file_type' => $media->mime,
             'size' => $media->size,
-            'url' => $publicUrl,
+            'url' => $publicUrl, // todo check
         ], 201);
     }
 
