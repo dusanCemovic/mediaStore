@@ -107,6 +107,10 @@ creates a DB record, and returns metadata including file type, size, and a publi
     - `Unit/PostRequestTest` - with testing post request with missing title (5), invalid type (6), large file (7)
     - `Unit/MediaServiceTest` - with testing Media Service if it is handling well test file and return proper Media
       object (8)
+    - Use:
+      ```
+      php artisan test
+      ```
 - Other
   - Accepted Token is stored in config/auth/ `custom-api-key` 
 
