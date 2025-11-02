@@ -155,4 +155,4 @@ curl -X GET http://127.0.0.1:8000/api/list \
 - For security, it can be used some library like Laravel Sanctum.
 - Media can be organized into folder or some specific structure.
 - Thumbnail can be created when listing file on front-end if we used also web routes.
-- Download endpoint can be created while listing on api call
+- Download image endpoint can be created while listing on api call
